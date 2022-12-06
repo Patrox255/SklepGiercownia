@@ -1,0 +1,229 @@
+#product-order {
+   margin: auto;
+   border: 0;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: center;
+   column-gap: 2em;
+   padding: 3em 0;
+   width: 100%;
+   border-bottom: 5px solid #fff461;
+}
+#product-order > figure > img {
+   width: 400px;
+   border-radius: 5px;
+   opacity: 0.7;
+   transition: 0.5s;
+}
+#product-order > figure:hover > img {
+   opacity: 1;
+}
+#product-order > figure {
+   position: relative;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   margin: 0;
+}
+#product-order > figure > figcaption {
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+   min-height: 10%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-color: rgba(38, 36, 30, 0.7);
+   opacity: 0;
+   transition: 0.5s;
+   font-weight: 700;
+   font-size: 2em;
+   text-align: center;
+}
+#product-order > figure:hover > figcaption {
+   opacity: 1;
+}
+#center {
+   min-height: 85vh;
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+#right {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   min-height: 40vh;
+}
+#right > div {
+   display: flex;
+   flex-direction: column;
+   min-height: 75%;
+   align-items: center;
+   justify-content: center;
+}
+#count-div > input {
+   outline: none;
+   margin-right: 0.5em;
+   height: 75%;
+   outline: none;
+   border: 3px solid #a67fad;
+   transition: 0.5s;
+   opacity: 0.7;
+   font-size: 1em;
+   border-radius: 6px;
+}
+#count-div > input:hover {
+   background-color: #241a26;
+   opacity: 1;
+}
+#count-div {
+   height: 25%;
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+   align-items: center;
+   margin-top: 0.5em;
+   font-size: 1.5em;
+}
+#available {
+   margin-left: 0.5em;
+}
+#product {
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+}
+#product-specification {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+#product-description-tags {
+   width: 100%;
+   display: flex;
+   flex-direction: row;
+   min-height: 40vh;
+   justify-content: center;
+   align-items: stretch;
+}
+#product-description {
+   width: 50%;
+   text-align: center;
+   border-right: 3px dashed #fff461;
+   padding: 0 1em;
+   padding-bottom: 3em;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+}
+#product-tags {
+   width: 50%;
+   display: flex;
+   justify-content: center;
+   flex-direction: column;
+   align-items: center;
+}
+#product-tags-div {
+   width: 100%;
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   justify-content: center;
+}
+.product-tag {
+   width: 20%;
+   margin: 0.5em 1em;
+   padding: 1em 0;
+   display: flex;
+   justify-content: center;
+   text-align: center;
+   align-items: center;
+   background-color: #241a26;
+   opacity: 0.7;
+   transition: 0.5s;
+   border-radius: 6px;
+}
+.product-tag:hover {
+   opacity: 1;
+}
+#count-err,
+#success-message {
+   margin-top: 1em;
+}
+#hardware-specification {
+   border-top: 5px solid #fff461;
+   width: 100%;
+   display: flex;
+   flex-direction: row;
+}
+#min-hardware-specification,
+#sug-hardware-specification {
+   width: 50%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   text-align: center;
+}
+#min-hardware-specification {
+   border-right: 3px dashed #fff461;
+   padding: 2em 0;
+}
+#product-header {
+   font-size: 1.5em;
+   font-weight: 700;
+}
+#product-header > h2 {
+   margin-bottom: 0;
+}
+#right > div > input {
+   padding: 0.5em 1em;
+   outline: none;
+   background-color: #26241e;
+   opacity: 0.7;
+   transition: 0.5s;
+   cursor: pointer;
+   border: 3px solid #a67fad;
+   margin-top: 1em;
+   font-size: 1.75em;
+   border-radius: 6px;
+}
+#right > div > input:hover {
+   background-color: #241a26;
+   opacity: 1;
+}
+#product-price-div {
+   font-size: 1.75em;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   row-gap: 0.25em;
+}
+#product-price-old {
+   text-decoration: line-through;
+   margin: 0;
+}
+#product-price-new {
+   color: #a67fad;
+   margin: 0;
+}
+#product-price {
+   margin: 0;
+}
+#buy-err,
+#success-message {
+   font-size: 1.5em;
+   text-align: center;
+   margin-top: 1em;
+}

@@ -1,0 +1,139 @@
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 85vh;
+    min-width: 40%;
+    row-gap: 0.5em;
+    padding: 2em 2em;
+    transition: 0.5s;
+}
+#main-form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1em;
+    padding-top: 1em;
+    min-width: 40%;
+    height: auto;
+    margin: auto;
+    transition: 0.5s;
+}
+#main-form > label,
+#address-fields > label,
+.one-row > label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    row-gap: 0.5em;
+    width: 100%;
+    min-height: 30%;
+}
+#main-form > label,
+#address-fields > label,
+.one-row > label {
+    min-height: 30%;
+}
+#main-form > input {
+    height: 20%;
+    cursor: pointer;
+}
+#main-form > label > input,
+#main-form > input,
+#address-fields > label > input,
+#address-fields > input,
+.one-row > label > input,
+.one-row > input {
+    width: 100%;
+    outline: none;
+    border: 3px solid #a67fad;
+    opacity: 0.7;
+    transition: 0.5s;
+    background-color: #26241e;
+}
+#main-form > label > input,
+#address-fields > label > input,
+.one-row > label > input {
+    min-height: 40%;
+}
+#main-form > input:hover,
+#main-form > label:hover > input,
+#address-fields > input:hover,
+#address-fields > label:hover > input,
+.one-row > label:hover > input,
+.one-row > input:hover {
+    opacity: 1;
+    background-color: #241a26;
+}
+#main-form > label > input[type="text"],
+#main-form > label > input[type="password"],
+#address-fields > label > input[type="text"],
+#address-fields > label > input[type="password"],
+#main-form > label > input[type="date"],
+#address-fields > label > input[type="number"] {
+    font-size: 0.75em;
+    padding: 0.25em 0.5em;
+}
+.one-row > label {
+    padding: 0.25em 0.5em;
+}
+#main-form > input[type="submit"] {
+    font-size: 2em;
+    padding: 0.25em 0.5em;
+    margin-top: 1em;
+}
+.err {
+    color: #adbfff;
+    font-weight: 700;
+    font-size: 1.5em;
+    margin-top: 1em;
+}
+#result {
+    font-size: 2em;
+    font-weight: 700;
+    width: 90%;
+    text-align: center;
+}
+#main-form > h2 {
+    font-size: 2.5em;
+    margin: 0;
+    padding-bottom: 1em;
+}
+#address-label {
+    display: flex;
+    flex-direction: row !important;
+    text-align: center;
+    padding: 1em 0;
+}
+#address-label > input {
+    width: 5% !important;
+}
+.one-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+#address-fields {
+    display: none;
+    flex-direction: column;
+    row-gap: 0.5em;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    justify-content: center;
+    align-items: center;
+}
+.one-row > label {
+    text-align: center;
+    height: 100% !important;
+    white-space: nowrap;
+}
+#flat-nr-check {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    text-align: center;
+}

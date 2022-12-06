@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pl">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Giercownia</title>
+      <link rel="stylesheet" href="style.css" type="text/css" />
+      <link rel="stylesheet" href="register.css" type="text/css" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+         rel="apple-touch-icon"
+         sizes="180x180"
+         href="/apple-touch-icon.png"
+      />
+      <link
+         rel="icon"
+         type="image/png"
+         sizes="32x32"
+         href="/favicon-32x32.png"
+      />
+      <link
+         rel="icon"
+         type="image/png"
+         sizes="16x16"
+         href="/favicon-16x16.png"
+      />
+      <link rel="manifest" href="/site.webmanifest" />
+      <link
+         href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
+         rel="stylesheet"
+      />
+   </head>
+   <body>
+      <header id="banner">
+         <a href="index.html"><h1>Giercownia</h1></a>
+      </header>
+      <main>
+         <form id="main-form">
+            <h2>Rejestracja</h2>
+            <label> Wprowadź login:<input type="text" id="login" /> </label>
+            <label>
+               Wprowadź adres e-mail:<input type="text" id="email" />
+            </label>
+            <label
+               >Wprowadź hasło:<input type="password" id="password"
+            /></label>
+            <label
+               >Wprowadź swoją datę urodzenia
+               <input type="date" id="birth-date"
+            /></label>
+            <label id="address-label"
+               >Chcesz uzupełnić adres do konta?
+               <input type="checkbox" id="address-check"
+            /></label>
+            <div id="address-fields">
+               <label>Podaj imię: <input type="text" id="first-name" /></label>
+               <label
+                  >Podaj nazwisko: <input type="text" id="last-name"
+               /></label>
+               <label
+                  >Podaj numer telefonu: <input type="number" id="phone-nr"
+               /></label>
+               <div class="one-row">
+                  <label>Podaj miasto: <input type="text" id="city" /></label>
+                  <label
+                     >Podaj kod pocztowy: <input type="text" id="postal-code"
+                  /></label>
+               </div>
+               <label>Podaj ulicę: <input type="text" id="street" /></label>
+               <div class="one-row">
+                  <label
+                     >Podaj numer domu: <input type="number" id="house-nr"
+                  /></label>
+                  <label
+                     >Chcesz wpisać numer mieszkania?<input
+                        type="checkbox"
+                        id="flat-check"
+                  /></label>
+               </div>
+               <label id="flat-nr-check"
+                  >Podaj numer mieszkania: <input type="number" id="flat-nr"
+               /></label>
+            </div>
+            <input type="submit" value="Zarejestruj się" id="register-btn" />
+         </form>
+      </main>
+   </body>
+   <script>
+      document.getElementById("main-form").addEventListener("submit", register);
+      document
+         .getElementById("address-check")
+         .addEventListener("click", changeAddress);
+      document.getElementById("flat-nr-check").style.display = "none";
+      let useAddress = false;
+      let useFlatNr = false;
+      function changeAddress() {
+         const addressFields = document.getElementById("address-fields");
+         if (!useAddress) {
+            document.getElementById("address-fields").style.display = "flex";
+            addressFields.style.opacity = 1;
+            document
+               .getElementById("flat-check")
+               .addEventListener("click", changeFlat);
+         } else {
+            addressFields.style.opacity = 0;
+            document
+               .getElementById("address-check")
+               .removeEventListener("click", changeAddress);
+            document.getElementById("address-check").disabled = true;
+            setTimeout(() => {
+               document
+                  .getElementById("address-check")
+                  .addEventListener("click", changeAddress);
+               document.getElementById("address-fields").style.display = "none";
+               document.getElementById("address-check").disabled = false;
+            }, 500);
+            for (error of Array.from(document.getElementsByClassName("err"))) {
+               if (
+                  error.classList.contains("a") ||
+                  error.classList.contains("f")
+               ) {
+                  error.remove();
+               }
+            }
+         }
+         useAddress = !useAddress;
+      }
+      function changeFlat() {
+         if (!useFlatNr) {
+            document.getElementById("flat-nr-check").style.display = "flex";
+            document.getElementById("flat-nr-check").style.opacity = 1;
+            document.getElementById("flat-nr-check").disabled = true;
+            document
+               .getElementById("flat-check")
+               .removeEventListener("click", changeFlat);
+            setTimeout(() => {
+               document.getElementById("flat-check").disabled = false;
+               document
+                  .getElementById("flat-check")
+                  .addEventListener("click", changeFlat);
+            }, 500);
+         } else {
+            document.getElementById("flat-nr-check").style.opacity = 0;
+            document
+               .getElementById("flat-check")
+               .removeEventListener("click", changeFlat);
+            document.getElementById("flat-check").disabled = true;
+            setTimeout(() => {
+               document.getElementById("flat-nr-check").style.display = "none";
+               document
+                  .getElementById("flat-check")
+                  .addEventListener("click", changeFlat);
+               document.getElementById("flat-check").disabled = false;
+            }, 500);
+            if (document.getElementById("flat-nr-err")) {
+               document.getElementById("flat-nr-err").remove();
+            }
+         }
+         useFlatNr = !useFlatNr;
+      }
+      function makeErrorDiv(str, id, c) {
+         if (!document.getElementById(id + "-err")) {
+            const err = document.createElement("div");
+            err.innerHTML = str;
+            document.getElementById("main-form").appendChild(err);
+            err.classList.add("err");
+            err.classList.add(c);
+            err.id = id + "-err";
+         }
+      }
+      function deleteIdDiv(id) {
+         if (document.getElementById(id + "-err")) {
+            document.getElementById(id + "-err").remove();
+         }
+      }
+      function register(e) {
+         e.preventDefault();
+         let create = true;
+         let allFields = true;
+         for (let label of document
+            .getElementById("main-form")
+            .getElementsByTagName("label")) {
+            if (
+               label.children[0].type !== "checkbox" &&
+               label.children[0].getBoundingClientRect().width !== 0 &&
+               !label.children[0].value
+            ) {
+               allFields = false;
+               console.log(label.children[0].id);
+            }
+         }
+         if (!allFields) {
+            create = false;
+            makeErrorDiv("Nie uzupełniono wszystkich pól!", "all-fields", "n");
+         } else {
+            deleteIdDiv("all-fields");
+         }
+         const email = document.getElementById("email").value;
+         const emailRegex = /@/;
+         if (!emailRegex.test(email)) {
+            create = false;
+            makeErrorDiv("Podano niepoprawny adres e-mail!", "email", "n");
+         } else {
+            deleteIdDiv("email");
+         }
+         if (useAddress) {
+            const name = document.getElementById("first-name").value;
+            const nameRegex =
+               /^([A-Z]|Ą|Ę|Ł|Ż|Ź|Ć|Ś|Ń)([a-z]|ą|ć|ę|ł|ń|ó|ś|ż|ź)+/;
+            if (!name.match(nameRegex) || name.match(nameRegex)[0] !== name) {
+               create = false;
+               makeErrorDiv("Podano niepoprawne imie!", "first-name", "a");
+            } else {
+               deleteIdDiv("first-name");
+            }
+            const surName = document.getElementById("last-name").value;
+            if (
+               !surName.match(nameRegex) ||
+               surName.match(nameRegex)[0] !== surName
+            ) {
+               create = false;
+               makeErrorDiv("Podano niepoprawne nazwisko!", "last-name", "a");
+            } else {
+               deleteIdDiv("last-name");
+            }
+            const phoneNumber = document.getElementById("phone-nr").value;
+            const phoneNumberRegex = /\d{9}/;
+            if (
+               !phoneNumber.match(phoneNumberRegex) ||
+               phoneNumber !== phoneNumber.match(phoneNumberRegex)[0]
+            ) {
+               create = false;
+               makeErrorDiv(
+                  "Podano niepoprawyny numer telefonu!",
+                  "phone-number",
+                  "a"
+               );
+            } else {
+               deleteIdDiv("phone-number");
+            }
+            const numberRegex = /\d/;
+            const city = document.getElementById("city").value;
+            if (numberRegex.test(city)) {
+               create = false;
+               makeErrorDiv("Podano niepoprawne miasto!", "city", "a");
+            } else {
+               deleteIdDiv("city");
+            }
+            const postalCode = document.getElementById("postal-code").value;
+            const postalCodeRegex = /\d{2}-\d{3}/;
+            if (
+               !postalCode.match(postalCodeRegex) ||
+               postalCode != postalCode.match(postalCodeRegex)
+            ) {
+               create = false;
+               makeErrorDiv(
+                  "Podano niepoprawny kod pocztowy!",
+                  "postal-code",
+                  "a"
+               );
+            } else {
+               deleteIdDiv("postal-code");
+            }
+            const nonNumberRegex = /[^A-Z|0-9]/;
+            const houseNr = document.getElementById("house-nr").value;
+            if (nonNumberRegex.test(houseNr)) {
+               create = false;
+               makeErrorDiv("Podano niepoprawny numer domu!", "house-nr", "a");
+            } else {
+               deleteIdDiv("house-nr");
+            }
+            if (useFlatNr) {
+               const flatNr = document.getElementById("flat-nr").value;
+               if (nonNumberRegex.test(flatNr)) {
+                  create = false;
+                  makeErrorDiv(
+                     "Podano niepoprawny numer mieszkania!",
+                     "flat-nr",
+                     "f"
+                  );
+               } else {
+                  deleteIdDiv("flat-nr");
+               }
+            } else {
+               if (document.getElementById("flat-nr-err")) {
+                  document.getElementById("flat-nr-err").remove();
+               }
+            }
+         } else {
+            for (error of Array.from(document.getElementsByClassName("err"))) {
+               if (
+                  error.classList.contains("a") ||
+                  error.classList.contains("f")
+               ) {
+                  error.remove();
+               }
+            }
+         }
+         if (create) {
+            const fieldValues = new FormData();
+            const tempArr = Array.from(
+               document
+                  .getElementById("main-form")
+                  .getElementsByTagName("label")
+            )
+               .map((label) => label.children[0])
+               .filter((input) => input.value && input.type !== "checkbox");
+            for (input of tempArr) {
+               fieldValues.append(input.id, input.value);
+            }
+            //  for ([property, value] of fieldValues) {
+            //     console.log(property + ": " + value);
+            //  }
+            fetch("register.php", {
+               method: "POST",
+               body: fieldValues,
+            })
+               .then((response) => {
+                  if (!response.ok) {
+                     throw new Error("Błąd z połączeniem");
+                  } else {
+                     response.text().then((result) => {
+                        console.log(result);
+                        if (result == 1) {
+                           deleteIdDiv("exist");
+                           deleteIdDiv("server");
+                           setTimeout(() => {
+                              window.location.href = "index.html";
+                           }, 1000);
+                        } else if (result == 0) {
+                           deleteIdDiv("exist");
+                           makeErrorDiv(
+                              "Problem z połączeniem z serwerem!",
+                              "server"
+                           );
+                        } else {
+                           makeErrorDiv(
+                              "Użytkownik o podanym loginie lub adresie e-mail już istnieje!",
+                              "exist"
+                           );
+                        }
+                     });
+                  }
+               })
+               .catch((error) => {
+                  console.log(error);
+               });
+         }
+      }
+      function checkIfLogged() {
+         fetch("check_if_logged.php", {
+            method: "GET",
+         })
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Error("Problem z połączeniem!");
+               } else {
+                  response.json().then((user) => {
+                     if (user["id"] != -1) {
+                        window.location.href = "index.html";
+                     }
+                  });
+               }
+            })
+            .catch((error) => {
+               console.log("Error: " + error);
+            });
+      }
+      checkIfLogged();
+   </script>
+</html>

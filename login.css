@@ -1,0 +1,81 @@
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 85vh;
+  min-width: 40%;
+  row-gap: .5em;
+}
+#main-form {
+  min-width: 40%;
+  height: auto;
+}
+#main-form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  row-gap: .5em;
+}
+#main-form > label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  row-gap: 0.5em;
+  width: 100%;
+  min-height: 30%;
+}
+#main-form > label {
+  min-height: 30%;
+}
+#main-form > input {
+  height: 20%;
+  cursor: pointer;
+}
+#main-form > label > input,
+#main-form > input {
+  width: 100%;
+  outline: none;
+  border: 3px solid #a67fad;
+  opacity: 0.7;
+  transition: 0.5s;
+  background-color: #26241e;
+}
+#main-form > label > input {
+  min-height: 40%;
+}
+#main-form > input:hover,
+#main-form > label:hover > input {
+  opacity: 1;
+  background-color: #241a26;
+}
+#main-form > label > input[type="text"],
+#main-form > label > input[type="password"] {
+  font-size: 0.75em;
+  padding: 0.25em 0.5em;
+}
+#main-form > input[type="submit"] {
+  font-size: 2em;
+  padding: 0.25em 0.5em;
+  margin-top: 1em;
+}
+.err {
+  color: #adbfff;
+  font-weight: 700;
+  font-size: 1.5em;
+  margin-top: 1em;
+}
+#result {
+  font-size: 2em;
+  font-weight: 700;
+  width: 90%;
+  text-align: center;
+}
+#main-form > h2 {
+  font-size: 3.5em;
+  margin: 0;
+  padding-bottom: 1em;
+}

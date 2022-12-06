@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pl">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Giercownia</title>
+      <link rel="stylesheet" href="style.css" type="text/css" />
+      <link rel="stylesheet" href="register.css" type="text/css" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+         rel="apple-touch-icon"
+         sizes="180x180"
+         href="/apple-touch-icon.png"
+      />
+      <link
+         rel="icon"
+         type="image/png"
+         sizes="32x32"
+         href="/favicon-32x32.png"
+      />
+      <link
+         rel="icon"
+         type="image/png"
+         sizes="16x16"
+         href="/favicon-16x16.png"
+      />
+      <link rel="manifest" href="/site.webmanifest" />
+      <link
+         href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
+         rel="stylesheet"
+      />
+   </head>
+   <body>
+      <header id="banner">
+         <a href="index.html"><h1>Giercownia</h1></a>
+      </header>
+      <main>
+         <form id="main-form">
+            <h2>Logowanie</h2>
+            <label>
+               Wprowadź login:<input type="text" id="login" name="login" />
+            </label>
+            <label
+               >Wprowadź hasło:<input
+                  type="password"
+                  id="password"
+                  name="password"
+            /></label>
+            <input type="submit" value="Zaloguj się" id="login-btn" />
+            <p>Nie masz konta? <a href="register.html">Zarejestruj się</a></p>
+         </form>
+      </main>
+   </body>
+   <script>
+      document.getElementById("main-form").addEventListener("submit", login);
+      function makeErrorDiv(str) {
+         if (document.getElementsByClassName("err").length === 0) {
+            const err = document.createElement("div");
+            err.innerHTML = str;
+            document.getElementsByTagName("main")[0].appendChild(err);
+            err.classList.add("err");
+         }
+      }
+      function removeErrors() {
+         for (let error of document.getElementsByClassName("err")) {
+            error.remove();
+         }
+      }
+      function login(e) {
+         e.preventDefault();
+         if (document.getElementById("result")) {
+            document.getElementById("result").remove();
+         }
+         const login = document.getElementById("login").value;
+         const password = document.getElementById("password").value;
+         if (!login || !password) {
+            makeErrorDiv("Uzupełnij wszystkie pola!");
+            return;
+         } else {
+            removeErrors();
+            let formInputs = new FormData(document.getElementById("main-form"));
+            for (let [property, value] of formInputs) {
+               console.log(property, value);
+            }
+            // let xhttp = new XMLHttpRequest();
+            // xhttp.onreadystatechange = function () {
+            //   if (this.status === 200 && this.readyState === 4) {
+            //     console.log(this.responseText);
+            //   }
+            // };
+            // xhttp.open("GET", "login.php");
+            // xhttp.send(formInputs);
+            fetch("login.php", {
+               method: "POST",
+               body: formInputs,
+            })
+               .then((response) => {
+                  if (!response.ok) {
+                     throw new Error("Problem z połączeniem!");
+                  }
+                  response
+                     .json()
+                     .then((json) => {
+                        if (json === -1) {
+                           removeErrors();
+                           makeErrorDiv("Problem z połączeniem!");
+                        } else if (json === 0) {
+                           removeErrors();
+                           makeErrorDiv("Nieprawidłowe dane do logowania!");
+                        } else {
+                           const result = document.createElement("p");
+                           result.innerHTML =
+                              "użytkownik " + json.login + " zalogował się!";
+                           document
+                              .getElementsByTagName("main")[0]
+                              .appendChild(result);
+                           result.id = "result";
+                           setTimeout(() => {
+                              window.location.href = "index.html";
+                           }, 2000);
+                        }
+                     })
+                     .catch((err) => {
+                        console.log(err);
+                     });
+               })
+               .catch((err) => {
+                  const errDiv = document.createElement("div");
+                  errDiuv.innerHTML = err;
+                  document.getElementsByTagName("main")[0].appendChild(errDiv);
+                  errDiv.classList.add("err");
+               });
+         }
+      }
+      function checkIfLogged() {
+         fetch("check_if_logged.php", {
+            method: "GET",
+         })
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Error("Problem z połączeniem!");
+               } else {
+                  response.json().then((user) => {
+                     if (user["id"] != -1) {
+                        window.location.href = "index.html";
+                     }
+                  });
+               }
+            })
+            .catch((error) => {
+               console.log("Error: " + error);
+            });
+      }
+      checkIfLogged();
+   </script>
+</html>

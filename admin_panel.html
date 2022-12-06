@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pl">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Giercownia</title>
+      <link rel="stylesheet" href="style.css" type="text/css" />
+      <link rel="stylesheet" href="admin_panel.css" type="text/css" />
+      <link
+         rel="apple-touch-icon"
+         sizes="180x180"
+         href="/apple-touch-icon.png"
+      />
+      <link
+         rel="icon"
+         type="image/png"
+         sizes="32x32"
+         href="/favicon-32x32.png"
+      />
+      <link
+         rel="icon"
+         type="image/png"
+         sizes="16x16"
+         href="/favicon-16x16.png"
+      />
+      <link rel="manifest" href="/site.webmanifest" />
+      <script
+         src="https://kit.fontawesome.com/2b44a7a62f.js"
+         crossorigin="anonymous"
+      ></script>
+   </head>
+   <body>
+      <header id="banner">
+         <div id="header-div">
+            <a href="index.html"><h1>Giercownia</h1></a>
+         </div>
+         <nav>
+            <div id="welcome-user-div">
+               <div id="center-user">
+                  <div id="user-nav">
+                     <a href="login.html" id="user-icon"
+                        ><i class="fa-solid fa-user"></i>
+                     </a>
+                  </div>
+               </div>
+            </div>
+         </nav>
+      </header>
+      <div id="container">
+         <div id="left"></div>
+         <div id="center">
+            <header id="admin-app-header"><h2>Panel administratora</h2></header>
+            <main id="admin-app" class="loading"></main>
+         </div>
+         <div id="right"></div>
+      </div>
+   </body>
+   <script>
+      const optionsFunctions = [];
+      const adminApp = document.getElementById("admin-app");
+      const optionsClickEvents = [];
+      function generateStartMenu() {
+         adminApp.insertAdjacentHTML(
+            "afterbegin",
+            `<h3>Dostępne opcje:</h3><div class='menu-option'><span class='option-text'>Dodaj nowy produkt</span></div>`
+         );
+         for ([number, option] of Array.from(
+            document.getElementsByClassName("menu-option")
+         ).entries()) {
+            optionsClickEvents.push(redirect.bind(null, number));
+            option.addEventListener("click", optionsClickEvents[number]);
+            option.children[0].insertAdjacentHTML(
+               "afterbegin",
+               `<span class='option-number'>${number + 1}.</span>`
+            );
+         }
+         function generateAddNewProduct() {
+            adminApp.innerHTML = `<button id='back'>Cofnij</button><h2>Uzupełnij wszystkie pola</h2><form id='add-product-form'>
+            <label>Podaj nazwę produktu: <input type='text' id='product-name'></label>
+            <div class='one-row'><label>Podaj cenę produktu bez rabatu: <input type='number' id='product-price' min='1' step='0.01'></label><label id='product-discount-div'>Podaj rabat na produkt w procentach:<input type='number' id='product-discount' min='0' max='100' step='1' value='0'></label></div>
+            <label>Wybierz platformę produktu:<select id='product-platforms'></select></label>
+            <label>Podaj gatunek produktu:<input type='text' id='product-genre'></label>
+            <label>Podaj wydawcę produktu:<input type='text' id='product-publisher'></label>
+            <label>Podaj producenta produktu:<input type='text' id='product-producer'></label>
+            <label>Podaj datę wydania produktu:<input type='date' id='product-release-date'></label>
+            <label>Podaj stan w magazynie produktu:<input type='number' id='product-stock'></label>
+            <label>Podaj opis produktu:<textarea id='product-description'></textarea></label>
+            <label>Wprowadź tagi produktu rozdzielone przecinkiem:<textarea id='product-tags'></textarea></label>
+            <label id='product-img-div'>Wprowadź zdjęcie produktu w formacie jpg:<input type='file' id='product-img' name='product-img'></label>
+            <div class='one-row' id='header-row'><h2>Wymagania sprzętowe minimalne:</h2><h2>Wymagania sprzętowe zalecane:</h2></div>
+            <div class='one-row'>
+               <div><label>Wprowadź nazwę procesora:<input type='text' id='min-cpu'></label><label>Wprowadź nazwę karty graficznej:<input type='text' id='min-gpu'></label><label>Wprowadź nazwę systemu operacyjnego:<input type='text' id='os'></label><label>Wprowadź wymagane miejsce na dysku w GB:<input type='number' min='1' id='disk-space'></label><label>Wprowadź ilość GB pamięci RAM:<input type='number' min='1' id='min-ram'></label></div>
+               <div><label>Wprowadź nazwę procesora:<input type='text' id='sug-cpu'></label><label>Wprowadź nazwę karty graficznej:<input type='text' id='sug-gpu'></label><label>Wprowadź ilość GB pamięci RAM:<input type='number' min='1' id='sug-ram'></label></div>
+            </div>
+            <button id='add-product-btn'>Dodaj produkt</button>
+            </form>
+            `;
+            fetch("get_platforms.php", {
+               method: "GET",
+            })
+               .then((response) => {
+                  if (!response.ok) {
+                     throw new Error("Problem z połączeniem!");
+                  } else {
+                     response.json().then((platforms) => {
+                        for (platform of platforms) {
+                           document
+                              .getElementById("product-platforms")
+                              .insertAdjacentHTML(
+                                 "beforeend",
+                                 `<option id=platform${platform["id"]} value=${platform["id"]}>${platform["nazwa"]}</option>`
+                              );
+                        }
+                        document
+                           .getElementById("add-product-btn")
+                           .addEventListener("click", addProduct);
+                        document
+                           .getElementById("back")
+                           .addEventListener("click", redirect.bind(null, 1));
+                        document
+                           .getElementById("product-price")
+                           .addEventListener("change", calculatePrice);
+                        document
+                           .getElementById("product-discount")
+                           .addEventListener("change", calculatePrice);
+                        adminApp.classList.add("loaded");
+                     });
+                  }
+               })
+               .catch((err) => console.log("Error: " + err));
+         }
+         optionsFunctions.push(generateAddNewProduct, generateStartMenu);
+         adminApp.classList.add("start-menu", "loaded");
+      }
+
+      function createErrDiv(str, id) {
+         if (!document.getElementById(`err${id}`)) {
+            document
+               .getElementById("admin-app")
+               .insertAdjacentHTML(
+                  "beforeend",
+                  `<div id=err${id} class='err'>${str}</div>`
+               );
+         }
+      }
+
+      function removeErrDivs() {
+         for (err of Array.from(document.getElementsByClassName("err"))) {
+            err.remove();
+         }
+      }
+
+      function addProduct(e) {
+         e.preventDefault();
+         const productData = new FormData(
+            document.getElementById("add-product-form")
+         );
+         const inputs = [];
+         for (label of Array.from(
+            document.getElementById("add-product-form").children
+         )) {
+            if (label.children.length != 1) {
+               for (labelNested of label.children) {
+                  if (
+                     labelNested.tagName != "H2" &&
+                     !labelNested.children[0].disabled &&
+                     labelNested.id != "final-price-div"
+                  ) {
+                     if (labelNested.children.length != 1) {
+                        for (labelNextNested of labelNested.children) {
+                           if (!labelNextNested.children[0].disabled) {
+                              inputs.push(labelNextNested.children[0]);
+                           }
+                        }
+                     } else {
+                        inputs.push(labelNested.children[0]);
+                     }
+                  }
+               }
+            } else {
+               if (!label.children[0].disabled) {
+                  inputs.push(label.children[0]);
+               }
+            }
+         }
+         console.log(inputs);
+         let allInputs = true;
+         for (input of inputs) {
+            if (input.id == "product-tags") {
+               let tags = input.value + "&";
+               let tagRegex = /[^,\n]+(,|&)/gi;
+               tags = tags.match(tagRegex);
+               if (tags) {
+                  tags = tags.map((tag) => {
+                     tag = tag.slice(0, -1);
+                     return tag;
+                  });
+                  console.log(JSON.stringify(tags));
+                  productData.set(input.id, JSON.stringify(tags));
+               } else {
+                  allInputs = false;
+               }
+            } else {
+               if (input.id != "product-img") {
+                  productData.set(input.id, input.value);
+               }
+            }
+         }
+         inputs.forEach((input) => {
+            if (!input.value) {
+               allInputs = false;
+            }
+         });
+         if (!allInputs) {
+            removeErrDivs();
+            createErrDiv("Uzupełnij wszystkie pola!", "all-inputs");
+         } else {
+            removeErrDivs();
+            fetch("add_product.php", {
+               method: "POST",
+               body: productData,
+            })
+               .then((response) => {
+                  if (!response.ok) {
+                     throw new Error("Problem z połączeniem!");
+                  } else {
+                     response.text().then((answer) => {
+                        console.log(answer);
+                        if (answer == -2) {
+                           createErrDiv(
+                              "Produkt o podanej nazwie już istnieje!",
+                              "exist"
+                           );
+                        } else if (answer == -1) {
+                           createErrDiv("Problem z połączeniem!", "connection");
+                        } else if (answer == 1) {
+                           createErrDiv("Dodano produkt!", "added");
+                        } else if (answer == -3) {
+                           createErrDiv("Niepoprawne zdjęcie produktu!", "img");
+                        } else {
+                           console.log(answer);
+                        }
+                     });
+                  }
+               })
+               .catch((err) => console.log("Error: " + err));
+         }
+      }
+
+      function redirect(functionId) {
+         adminApp.classList.remove("loaded");
+         for ([number, option] of Array.from(
+            document.getElementsByClassName("menu-option")
+         ).entries()) {
+            option.removeEventListener("click", optionsClickEvents[number]);
+         }
+         setTimeout(() => {
+            adminApp.innerHTML = "";
+            optionsFunctions[functionId]();
+         }, 500);
+      }
+
+      function checkIfLogged() {
+         fetch("check_if_logged.php", {
+            method: "GET",
+         })
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Error("Problem z połączeniem!");
+               } else {
+                  response.json().then((user) => {
+                     if (user["is_admin"] == "false") {
+                        window.location.href = "index.html";
+                     } else {
+                        if (user["id"] != -1) {
+                           document
+                              .getElementById("user-nav")
+                              .insertAdjacentHTML(
+                                 "beforeend",
+                                 `<a href='logout.php' class='slider'>Wyloguj się</a>`
+                              );
+                           generateStartMenu();
+                        } else {
+                           window.location.href = "index.html";
+                        }
+                     }
+                  });
+               }
+            })
+            .catch((error) => {
+               console.log("Error: " + error);
+            });
+      }
+
+      function calculatePrice() {
+         const price = Number(document.getElementById("product-price").value);
+         const discount = document.getElementById("product-discount").value;
+
+         if (!price || !discount) {
+            if (document.getElementById("final-price-div")) {
+               document.getElementById("final-price-div").remove();
+            }
+         } else {
+            let finalPrice =
+               Math.round((1 - discount / 100) * price * 100) / 100;
+            finalPrice = finalPrice.toFixed(2);
+            if (!document.getElementById("final-price")) {
+               document
+                  .getElementById("add-product-form")
+                  .getElementsByClassName("one-row")[0]
+                  .insertAdjacentHTML(
+                     "beforeend",
+                     `<div id='final-price-div'><span>Cena końcowa: </span><span id='final-price'>${finalPrice} zł</span></div>`
+                  );
+            } else {
+               document.getElementById("final-price").textContent =
+                  finalPrice + " zł";
+            }
+         }
+      }
+
+      checkIfLogged();
+   </script>
+</html>

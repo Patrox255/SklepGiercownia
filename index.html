@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pl">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Giercownia</title>
+      <link rel="stylesheet" href="style.css" type="text/css" />
+      <link rel="stylesheet" href="main.css" type="text/css" />
+      <link
+         rel="apple-touch-icon"
+         sizes="180x180"
+         href="/apple-touch-icon.png"
+      />
+      <link
+         rel="icon"
+         type="image/png"
+         sizes="32x32"
+         href="/favicon-32x32.png"
+      />
+      <link
+         rel="icon"
+         type="image/png"
+         sizes="16x16"
+         href="/favicon-16x16.png"
+      />
+      <link rel="manifest" href="/site.webmanifest" />
+      <script
+         src="https://kit.fontawesome.com/2b44a7a62f.js"
+         crossorigin="anonymous"
+      ></script>
+   </head>
+   <body>
+      <header id="banner">
+         <h1>Giercownia</h1>
+         <nav>
+            <label>Szukaj: <input type="text" id="search" /></label>
+            <div id="welcome-user-div">
+               <div id="center-user">
+                  <div id="user-nav">
+                     <a href="login.html" id="user-icon"
+                        ><i class="fa-solid fa-user"></i>
+                     </a>
+                  </div>
+               </div>
+            </div>
+         </nav>
+      </header>
+      <nav id="sort-range">
+         <label id="sort"
+            >Posortuj:
+            <select id="sort-option">
+               <option value="produkt.nazwa desc">A-Z</option>
+               <option value="produkt.nazwa asc">Z-A</option>
+               <option value="round(produkt.cena*rabat.mnoznik*100)/100 asc">
+                  Ceną malejąco
+               </option>
+               <option value="round(produkt.cena*rabat.mnoznik*100)/100 desc">
+                  Ceną rosnąco
+               </option>
+               <option value="produkt.popularnosc asc">Popularność</option>
+            </select></label
+         >
+         <label id="price-range"
+            >Zakres cenowy:
+            <div id="price-min-max-div">
+               <label
+                  >Cena minimalna:
+                  <input
+                     type="number"
+                     step="0.01"
+                     min="0.00"
+                     id="price-range-min" /></label
+               ><label
+                  >Cena maksymalna:
+                  <input
+                     min="0.00"
+                     type="number"
+                     step="0.01"
+                     id="price-range-max"
+               /></label></div
+         ></label>
+      </nav>
+
+      <div id="center">
+         <main id="products"></main>
+
+         <nav id="categories">
+            <h2>Kategorie gier:</h2>
+         </nav>
+      </div>
+   </body>
+   <script>
+      let searchData = {
+         selectedCategories: [],
+         searchBar: "",
+         sort: "produkt.nazwa desc",
+         priceRange: {
+            min: 0.0,
+            max: "max",
+         },
+      };
+      let uid;
+
+      document.getElementById("search").addEventListener("change", search);
+      document
+         .getElementById("sort-option")
+         .addEventListener("change", changeSort);
+      const priceRanges = [];
+      for (priceRange of document
+         .getElementById("price-min-max-div")
+         .getElementsByTagName("label")) {
+         priceRanges.push(priceRange.children[0]);
+      }
+      for (priceRange of priceRanges) {
+         priceRange.addEventListener("change", changePriceRange);
+      }
+
+      function loadProducts() {
+         fetch("load_products.php", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify(searchData),
+         })
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Error("Problem z połączeniem");
+               } else {
+                  response.json().then((products) => {
+                     console.log(products);
+                     if (products.length > 0) {
+                        document
+                           .getElementById("products")
+                           .classList.remove("no-products");
+                        document.getElementById("products").innerHTML = "";
+                        for (let product of products) {
+                           let advert = `<article class="advert start">
+                                     <a href="product.php?id=${product["id"]}">
+                                         <figure>
+                                             <img src="Grafiki/${
+                                                product["nazwa"]
+                                                   .replaceAll("ź", 'z')
+                                                   .toLowerCase()
+                                                   .replaceAll(" ", "-")
+                                                   .replaceAll(":", "-") +
+                                                ".jpg"
+                                             }"><figcaption>${
+                              product["nazwa"]
+                           }<span>Gatunek: ${product["gatunek"]}</span>`;
+                           if (product["mnoznik"] != 1) {
+                              let price =
+                                 Math.round(
+                                    product["cena"] * product["mnoznik"] * 100
+                                 ) / 100;
+                              price = price.toFixed(2);
+                              advert += `<span class="old-price">${
+                                 product["cena"] + " zł"
+                              }</span><span class="discount-price">${
+                                 price + " zł"
+                              }</span>`;
+                           } else {
+                              advert += `<span class="price">${
+                                 product["cena"] + " zł"
+                              }</span>`;
+                           }
+                           advert += `</figcaption></figure></a></article>`;
+                           document
+                              .getElementById("products")
+                              .insertAdjacentHTML("afterbegin", advert);
+                        }
+                     } else {
+                        document.getElementById("products").innerHTML =
+                           "<h2>Nie znaleziono takich produktów!</h2>";
+                        document
+                           .getElementById("products")
+                           .classList.add("no-products");
+                     }
+                     loadCategories();
+                     for (let product of Array.from(
+                        document.getElementsByClassName("advert")
+                     )) {
+                        product.style.opacity = "0.7";
+                     }
+                     setTimeout(() => {
+                        for (let product of Array.from(
+                           document.getElementsByClassName("advert")
+                        )) {
+                           product.style.opacity = "";
+                           product.classList.remove("start");
+                        }
+                     }, 200);
+                  });
+               }
+            })
+            .catch((error) => console.log("Error: " + error));
+      }
+
+      function loadCategories() {
+         fetch("load_categories.php", {
+            method: "GET",
+         })
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Error("Problem z połączeniem");
+               } else {
+                  response.json().then((genres) => {
+                     console.log(genres);
+                     if (genres.length > 0) {
+                        const divs = Array.from(
+                           document
+                              .getElementById("categories")
+                              .getElementsByTagName("div")
+                        );
+                        for (let div of divs) {
+                           div.remove();
+                        }
+                        for (let genre of genres) {
+                           let genreDiv = `<div id="category-${genre["id"]}"><a>${genre["nazwa"]}</a></div>`;
+                           document
+                              .getElementById("categories")
+                              .getElementsByTagName("h2")[0]
+                              .insertAdjacentHTML("afterend", genreDiv);
+                           document
+                              .getElementById("category-" + genre["id"])
+                              .addEventListener("click", () => {
+                                 toogleCategory(genre["id"]);
+                              });
+                           if (
+                              searchData.selectedCategories.includes(
+                                 genre["id"]
+                              )
+                           ) {
+                              document
+                                 .getElementById("category-" + genre["id"])
+                                 .classList.add("selected-category");
+                           }
+                        }
+                     }
+                  });
+               }
+            })
+            .catch((error) => console.log(error));
+      }
+
+      function toogleCategory(id) {
+         if (searchData.selectedCategories.includes(id)) {
+            searchData.selectedCategories =
+               searchData.selectedCategories.filter(
+                  (categoryId) => categoryId !== id
+               );
+         } else {
+            searchData.selectedCategories.push(id);
+         }
+         loadProducts();
+         console.log(searchData.selectedCategories);
+      }
+
+      function search() {
+         searchData.searchBar = document
+            .getElementById("search")
+            .value.toLowerCase();
+         loadProducts();
+      }
+
+      function changeSort() {
+         searchData.sort = document.getElementById("sort-option").value;
+         loadProducts();
+      }
+
+      function changePriceRange() {
+         let correctValues = true;
+         let min = 0;
+         let max = "max";
+         for (let [i, priceRange] of priceRanges.entries()) {
+            if (i === 0) {
+               if (priceRange.value >= 0 && priceRange.value) {
+                  min = priceRange.value;
+               }
+            } else {
+               if (priceRange.value >= 0 && priceRange.value) {
+                  max = priceRange.value;
+               }
+            }
+         }
+         searchData.priceRange.min = min;
+         searchData.priceRange.max = max;
+         loadProducts();
+      }
+
+      function getDataFromSession() {
+         fetch("get_data_from_session.php", {
+            method: "GET",
+         })
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Error("Problem z połączeniem!");
+               } else {
+                  response.json().then((data) => {
+                     if (data != -1) {
+                        searchData = data["searchData"];
+                        uid = data["uid"];
+                        for (const [i, priceRange] of priceRanges.entries()) {
+                           if (i === 0) {
+                              priceRange.value = searchData.priceRange.min;
+                           } else {
+                              let max = parseFloat(
+                                 searchData.priceRange.max
+                              ).toFixed(2);
+                              priceRange.value = max;
+                           }
+                        }
+                        document.getElementById("search").value =
+                           searchData["searchBar"];
+                        console.log(searchData, uid);
+                        document.getElementById("sort-option").value =
+                           searchData["sort"];
+                     }
+                     generateUserDiv();
+                     checkIfLogged();
+                     loadProducts();
+                  });
+               }
+            })
+            .catch((error) => console.log("Błąd: " + error));
+      }
+
+      function generateUserDiv() {
+         fetch("check_if_logged.php", {
+            method: "GET",
+         })
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Erorr("Problem z połączeniem!");
+               } else {
+                  response
+                     .json()
+                     .then(
+                        (user) =>
+                           user["id"] != -1 &&
+                           document
+                              .getElementById("welcome-user-div")
+                              .insertAdjacentHTML(
+                                 "afterbegin",
+                                 `<p id='welcome-message'>Witaj ${user["login"]}!</p>`
+                              )
+                     );
+               }
+            })
+            .catch((error) => console.log("Error: " + error));
+      }
+
+      function checkIfLogged() {
+         fetch("check_if_logged.php", {
+            method: "GET",
+         })
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Error("Problem z połączeniem!");
+               } else {
+                  response.json().then((user) => {
+                     console.log(user);
+                     if (user["id"] != -1) {
+                        if (user["isAdmin"] == "true") {
+                           document
+                              .getElementById("user-nav")
+                              .insertAdjacentHTML(
+                                 "beforeend",
+                                 `<a href='admin_panel.html' class='slider'>Panel administratora</a>`
+                              );
+                        }
+                        document
+                           .getElementById("user-nav")
+                           .insertAdjacentHTML(
+                              "beforeend",
+                              `<a href='logout.php' class='slider'>Wyloguj się</a>`
+                           );
+                     } else {
+                        document.getElementById("user-nav").insertAdjacentHTML(
+                           "beforeend",
+                           `<a href="register.html" class="slider">Zarejestruj się</a>
+                     <a href="login.html" class="slider">Zaloguj się</a>`
+                        );
+                     }
+                  });
+               }
+            })
+            .catch((error) => {
+               console.log("Error: " + error);
+            });
+      }
+
+      getDataFromSession();
+   </script>
+</html>

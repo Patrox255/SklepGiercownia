@@ -1,0 +1,141 @@
+* {
+   background-color: #26241e;
+   box-sizing: border-box;
+   color: #fff461;
+   font-family: "Lato", sans-serif;
+}
+body {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   min-width: 100%;
+   height: auto;
+   margin: 0;
+   padding: 0;
+   flex-direction: column;
+}
+#banner {
+   height: 15vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 100%;
+   font-size: 2em;
+   border-bottom: 5px solid #fff461;
+}
+#banner > h1,
+#banner > a,
+#banner > a > h1,
+#header-div > h1,
+#header-div > a,
+#header-div > a > h1 {
+   margin: 0;
+   font-weight: 700;
+   text-decoration: none;
+}
+#header-div {
+   width: 60%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+#banner > nav {
+   width: 40%;
+   height: 100%;
+   justify-content: flex-start;
+}
+#welcome-user-div {
+   width: 40%;
+   height: 100%;
+   display: flex;
+   justify-content: flex-start;
+   align-items: center;
+}
+#welcome-user-div > a {
+   width: 20%;
+   display: flex;
+   justify-content: center;
+   height: 100%;
+   transition: 0.5s;
+   opacity: 0.7;
+   align-items: center;
+   border-radius: 5px;
+}
+#welcome-user-div > a:hover {
+   opacity: 1;
+}
+#welcome-user-div > a > i {
+   font-size: 1.25em;
+}
+#welcome-message {
+   white-space: nowrap;
+}
+#welcome-user {
+   width: 40%;
+   margin-left: 2em;
+}
+#user-nav {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   text-align: center;
+   position: absolute;
+   top: 0;
+   left: 1em;
+   border: 3px solid rgba(255, 244, 97, 0.5);
+   transition: 0.5s;
+   z-index: 10;
+   border-radius: 6px;
+}
+#user-nav:hover {
+   border-color: rgba(255, 244, 97, 1);
+}
+#user-nav > a {
+   min-height: 5vh;
+   justify-content: center;
+   align-items: center;
+   font-size: 1.5rem;
+}
+#user-icon {
+   cursor: default;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   min-height: 5vh;
+   min-width: 14vw;
+   border-bottom: 3px solid transparent;
+   transition: background-color 0.5s ease-in-out;
+}
+#user-icon > i {
+   color: rgba(255, 244, 97, 0.5);
+   transition: 0.5s;
+}
+#center-user {
+   position: relative;
+   width: 100%;
+   min-height: 45%;
+}
+.slider {
+   text-decoration: none;
+   min-width: 10vw;
+   background-color: #26241e;
+   display: none;
+   color: rgba(255, 244, 97, 0.7);
+   transition: 0.5s;
+}
+#user-nav:hover > #user-icon {
+   background-color: #241a26;
+}
+#user-nav:hover > #user-icon > i {
+   color: rgba(255, 244, 97, 1);
+}
+#user-nav:hover > .slider {
+   display: flex;
+}
+#user-nav:hover > #user-icon {
+   border-bottom: 3px solid #fff461;
+}
+.slider:hover {
+   background-color: #241a26;
+   color: rgba(255, 244, 97, 1);
+}
